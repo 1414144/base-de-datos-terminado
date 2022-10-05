@@ -64,8 +64,8 @@ def pantalla_inventario ():
             if columna[0]==txt_codigo.get():
                 txt_libro.insert(0,columna[1])
                 txt_autor.insert(0,columna[2])
-                txt_genero.insert(0,columna[3])
-                txt_año.insert(0,columna[4])
+                txt_año.insert(0,columna[3])
+                txt_genero.insert(0,columna[4])
         #txt_codigo.delete(0,END)
         txt_codigo.focus()
         cur.close()
