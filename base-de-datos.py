@@ -1,3 +1,4 @@
+#--------------------libreria-------------------------------------
 from cProfile import label
 from cgitb import text
 from email import message
@@ -33,8 +34,8 @@ bd.execute("CREATE TABLE IF NOT EXISTS prestamo(cod_libro VARCHAR(25),Nombre_lib
 bd.close()
 
 #--------------------------ventana secundaria-------------------------------
-
 def pantalla_inventario ():
+#--------------------------funcion de agregar libro------------------------------------------------    
     def agregar_libro():
         cur=conexion.cursor()
         cod=txt_codigo.get()
@@ -52,6 +53,7 @@ def pantalla_inventario ():
         txt_año.delete(0,END)
         txt_genero.delete(0,END)
         txt_codigo.focus()
+#-----------------------------------funcion de buscar--------------------------------------------------
     def buscar_libro():
         cur=conexion.cursor()
         cur.execute("select * from inventario")
@@ -69,16 +71,44 @@ def pantalla_inventario ():
         #txt_codigo.delete(0,END)
         txt_codigo.focus()
         cur.close()
-        
-                  
-  #----------------------------------------------------------------------------------------------       
+#------------------------------------funcion de limpiar-------------------------------------------------
+    def limpiar():
+        txt_codigo.delete(0,END)
+        txt_libro.delete(0,END)
+        txt_autor.delete(0,END)
+        txt_año.delete(0,END)
+        txt_genero.delete(0,END)
+        txt_codigo.focus()
+ #------------------------------funcion de eliminar--------------------------------------------------------       
+    def eliminar_libro():
+        cur=conexion.cursor()
+        cod=txt_codigo.get()
+        cur.execute("delete from inventario where codigo ='{}'".format(cod))
+        conexion.commit()
+        cur.close()
+        messagebox.showinfo(message="se elimino el libro exitosamente",title="informacion")
+        txt_codigo.delete(0,END)
+        txt_libro.delete(0,END)
+        txt_autor.delete(0,END)
+        txt_año.delete(0,END)
+        txt_genero.delete(0,END)
+#---------------------------------funcion modifica------------------------------------------------------------------------        
+    def modificar_libro():
+        cur = conexion.cursor()
+        modificar_datos = txt_libro.get(), txt_autor.get(), txt_año.get(), txt_genero.get(), txt_codigo.get()
+        cur.execute("update inventario set Libro=%s, Autor=%s, Año_Publicado=%s, genero=%s where Codigo=%s",modificar_datos)
+        conexion.commit()
+        cur.close()
+        messagebox.showinfo(message="los datos se modificaron",title="informacion")
+        limpiar()
+  #-----------------------------dimenciones de ventan-----------------------------------------------------------------       
     inventario = Tk()
     inventario.title('Biblioteca virtual')
     inventario.geometry('800x400')
     inventario.config(bg='#A8EBE7')
     inventario.resizable(0,0)
     
- #------------------------titulo de la segunda ventana-------------------------------
+ #------------------------titulo-------------------------------
 
     etiqueta_inventario = Label (inventario,font=('century',18,'bold'),text='INVENTARIO',bg='#A8EBE7',width=20,height=1,bd=5,fg="#E31C1C")
     etiqueta_inventario.place(x=25,y=10)
@@ -119,12 +149,20 @@ def pantalla_inventario ():
 
     #---------------------------------boton----------------------------------------
 
-    boton_inventario = Button(inventario , text="Agregar Libro",width=30,height=3,command=agregar_libro)
+    boton_inventario = Button(inventario , text="Agregar Libro",width=30,height=3,command = agregar_libro)
     boton_inventario.place(x=300,y=295)
 
-    boton_buscar = Button(inventario , text="buscar",width=25,height=2,command=buscar_libro)
+    boton_buscar = Button(inventario , text="buscar",width=25,height=2,command = buscar_libro)
     boton_buscar.place(x=500,y=80)
+    
+    boton_cancelar = Button(inventario,text="limpiar",width=25,height=2,command = limpiar)
+    boton_cancelar.place(x=500,y=140)
 
+    boton_eliminar = Button(inventario,text="eliminar libro",width=25,height=2,command = eliminar_libro)
+    boton_eliminar.place(x=500,y=190)
+
+    boton_eliminar = Button(inventario,text="modifiacar libro",width=25,height=2,command = modificar_libro)
+    boton_eliminar.place(x=580,y=300)
 #-------------------------tercera ventana--------------------------------
 
 def pantalla_prestamos ():
@@ -133,7 +171,8 @@ def pantalla_prestamos ():
     prestamos.geometry('800x400')
     prestamos.config(bg='#A8EBE7')
     prestamos.resizable(0,0)
-
+#-------------------------------------------------titulo---------------------------------------------------------------------------------------
+    
     etiqueta_prestamos = Label (prestamos,font=('century',18,'bold'),text='Prestamos',bg='#A8EBE7',width=20,height=1,bd=5,fg="#E31C1C")
     etiqueta_prestamos.place(x=25,y=10)
 
@@ -154,6 +193,7 @@ def pantalla_prestamos ():
 
     etiqueta_genero = Label (prestamos,font=('century',14,'bold'),text='Nombre del Cliente',bg='#A8EBE7',width=15,height=1,bd=5,fg="#E31C1C")
     etiqueta_genero.place(x=8,y=290)
+    
  #-----------------------------------------entry-----------------------------------
 
     txt_codigo = Entry(prestamos,font=('century',18,'bold'),width=17,)
